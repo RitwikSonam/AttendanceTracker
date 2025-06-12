@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>View Attendance Table</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: #f8f9fa;
+      padding: 20px;
+      text-align: center;
+    }
+    h1 {
+      margin-bottom: 20px;
+    }
+    input[type="date"] {
+      padding: 8px;
+      font-size: 16px;
+      margin-bottom: 20px;
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 20px;
+      background-color: #fff;
+    }
+    th, td {
+      border: 1px solid #ddd;
+      padding: 10px;
+      text-align: center;
+    }
+    th {
+      background-color: #343a40;
+      color: white;
+    }
+    tr:nth-child(even) {
+      background-color: #f2f2f2;
+    }
+    .absent-row {
+      background-color: #ffd6d6 !important;
+    }
+    a {
+      display: inline-block;
+      margin-top: 20px;
+      text-decoration: none;
+      background-color: #007bff;
+      color: white;
+      padding: 10px 20px;
+      border-radius: 5px;
+    }
+  </style>
+</head>
+<body>
+  <h1>✅ Attendance Table</h1>
+
+  <label for="date-input">Select Date:</label>
+  <input type="date" id="date-input" min="2024-05-19" max="2026-06-30" />
+
+  <table id="attendance-table" style="display:none">
+    <thead>
+      <tr>
+        <th>Date</th>
+        <th>Physics</th>
+        <th>Chemistry</th>
+        <th>Zoology</th>
+        <th>Botany</th>
+      </tr>
+    </thead>
+    <tbody></tbody>
+  </table>
+
+  <a href="index.html">Back to Mark Attendance</a>
+
+  <script>
+    function formatDate(date) {
+      return date.toISOString().split('T')[0];
+    }
+
+    const data = JSON.parse(localStorage.getItem("attendanceData") || '{}');
+    const tbody = document.querySelector("#attendance-table tbody");
+    const table = document.querySelector("#attendance-table");
+
+    document.getElementById("date-input").addEventListener("change", function () {
+      tbody.innerHTML = "";
+      const selectedDate = this.value;
+      const subjects = data[selectedDate] || {};
+      const isAbsent = !subjects.Physics && !subjects.Chemistry && !subjects.Zoology && !subjects.Botany;
+      const row = document.createElement("tr");
+      if (isAbsent) row.classList.add("absent-row");
+
+      row.innerHTML = `
+        <td>${selectedDate}</td>
+        <td>${subjects.Physics ? '✔️' : '❌'}<br><small>${subjects.PhysicsTime || '-'}</small></td>
+        <td>${subjects.Chemistry ? '✔️' : '❌'}<br><small>${subjects.ChemistryTime || '-'}</small></td>
+        <td>${subjects.Zoology ? '✔️' : '❌'}<br><small>${subjects.ZoologyTime || '-'}</small></td>
+        <td>${subjects.Botany ? '✔️' : '❌'}<br><small>${subjects.BotanyTime || '-'}</small></td>
+      `;
+      tbody.appendChild(row);
+      table.style.display = "table";
+    });
+  </script>
+</body>
+</html>
